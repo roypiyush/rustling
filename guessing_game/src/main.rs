@@ -5,9 +5,10 @@ use std::cmp::Ordering;
 extern crate rand;
 
 fn main() {
-    println!("Guess the number!");
+    println!("Guess the number between 1-100");
     let _secret_number = rand::thread_rng().gen_range(1, 101);
-    loop {
+    let mut chances_left = 3;
+    while chances_left > 0 {
         println!("Please input your guess.");
         let mut guess = String::new();
         io::stdin().read_line(&mut guess)
@@ -24,6 +25,10 @@ fn main() {
                 println!("You win!");
                 break;
             }
+        }
+        chances_left -= 1;
+        if chances_left != 0 {
+            println!("You've {} chance(s) left\n", chances_left);
         }
     }
 }
