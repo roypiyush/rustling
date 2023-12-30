@@ -20,6 +20,18 @@ impl List {
         List { head: Link::Empty }
     }
 
+    pub fn len(&self) -> u32 {
+        let mut size = 0u32;
+
+        let mut cur_node = &self.head;
+        while let Link::More(node) = cur_node {
+            cur_node = &node.next;
+            size += 1;
+        }
+
+        return size;
+    }
+
     pub fn push(&mut self, element: u32) {
         let new_node = Node {
             elem: element,
@@ -50,6 +62,19 @@ impl List {
     }
 }
 
+impl Drop for List {
+    fn drop(&mut self) {
+
+        
+        while let Link::More(_) = std::mem::replace(&mut self.head, Link::Empty) {
+            match std::mem::replace(&mut self.head, Link::Empty) {
+                Link::Empty => {},
+                Link::More(boxed_node) => {self.head = boxed_node.next}
+            }   
+        }
+    }
+}
+
 fn main() {}
 
 #[cfg(test)]
@@ -68,12 +93,15 @@ mod test {
         list.push(3);
         assert_eq!(list.peek(), Some(3));
 
+        assert_eq!(list.len(), 3);
+
         assert_eq!(list.pop(), Some(3));
         assert_eq!(list.pop(), Some(2));
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
 
         assert_eq!(list.peek(), None);
+        assert_eq!(list.len(), 0);
     }
 
     #[test]
