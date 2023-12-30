@@ -5,7 +5,7 @@ pub struct List {
 
 #[derive(Debug)]
 struct Node {
-    elem: i32,
+    elem: u32,
     next: Link,
 }
 
@@ -20,7 +20,7 @@ impl List {
         List { head: Link::Empty }
     }
 
-    pub fn push(&mut self, element: i32) {
+    pub fn push(&mut self, element: u32) {
         let new_node = Node {
             elem: element,
             // replace with put Empty into head and return head which is assigned to next
@@ -31,7 +31,7 @@ impl List {
         self.head = Link::More(Box::new(new_node));
     }
 
-    pub fn pop(&mut self) -> Option<i32> {
+    pub fn pop(&mut self) -> Option<u32> {
         let cur_node = std::mem::replace(&mut self.head, Link::Empty);
         match cur_node {
             Link::Empty => Option::None,
@@ -42,7 +42,7 @@ impl List {
         }
     }
 
-    pub fn peek(&self) -> Option<i32> {
+    pub fn peek(&self) -> Option<u32> {
         match &self.head {
             Link::Empty => Option::None,
             Link::More(node) => Option::Some((*node).elem),
@@ -72,6 +72,21 @@ mod test {
         assert_eq!(list.pop(), Some(2));
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
+
+        assert_eq!(list.peek(), None);
+    }
+
+    #[test]
+    fn test_push_pop_at_scale() {
+        let mut list = List::new();
+        let size = 999u32;
+        for i in 0u32..size {
+            list.push(i);
+        }
+
+        for _ in 0u32..size {
+            list.pop();
+        }
 
         assert_eq!(list.peek(), None);
     }
