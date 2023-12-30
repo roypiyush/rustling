@@ -80,6 +80,14 @@ impl<T> Drop for List<T> {
     }
 }
 
+impl<T> Iterator for List<T> {
+    fn next(&mut self) -> Option<Self::Item> {
+        self.pop()
+    }
+
+    type Item = T;
+}
+
 fn main() {
     let mut list = List::new();
 
@@ -126,5 +134,19 @@ mod test {
         }
 
         assert_eq!(list.len(), 99999);
+    }
+
+    #[test]
+    fn into_iter() {
+        let mut list = List::new();
+        list.push(1); list.push(2); list.push(3);
+
+        let mut iter = list.into_iter();
+        assert_eq!(iter.next(), Some(3));
+        assert_eq!(iter.next(), Some(2));
+        assert_eq!(iter.next(), Some(1));
+        assert_eq!(iter.next(), None);
+        assert_eq!(iter.len(), 0);
+
     }
 }
