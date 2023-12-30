@@ -1,45 +1,78 @@
-
-enum LinkedList {
-    Node(i32, Box<LinkedList>),
-    Nil,
+#[derive(Debug)]
+pub struct List {
+    head: Link,
 }
 
-impl LinkedList {
-    fn new() -> LinkedList {
-        Nil
+#[derive(Debug)]
+struct Node {
+    elem: i32,
+    next: Link,
+}
+
+#[derive(Debug)]
+enum Link {
+    Empty,
+    More(Box<Node>),
+}
+
+impl List {
+    pub fn new() -> Self {
+        List { head: Link::Empty }
     }
 
-    fn prepend(self, value: i32) -> LinkedList {
-        Node(value, Box::new(self))
+    pub fn push(&mut self, element: i32) {
+        let new_node = Node {
+            elem: element,
+            // replace with put Empty into head and return head which is assigned to next
+            next: std::mem::replace(&mut self.head, Link::Empty),
+        };
+        // fix above replacement by assign new value
+        // owner of self will still have valid ownership
+        self.head = Link::More(Box::new(new_node));
     }
-    
-    fn len(&self) -> i32 {
-        match *self {
-            // ref since self is borrowed
-            Node(_, ref tail) => 1 + tail.len(),
-            Nil => 0 // base case
+
+    pub fn pop(&mut self) -> Option<i32> {
+        let cur_node = std::mem::replace(&mut self.head, Link::Empty);
+        match cur_node {
+            Link::Empty => Option::None,
+            Link::More(node) => {
+                self.head = node.next;
+                Option::Some((*node).elem)
+            }
         }
     }
 
-    fn stringify(&self) -> String {
-        match *self {
-            Node(head, ref tail) => {
-                format!("{} => {}", head, tail.stringify())
-            },
-            Nil => {
-                format!("Nil")
-            },
+    pub fn peek(&self) -> Option<i32> {
+        match &self.head {
+            Link::Empty => Option::None,
+            Link::More(node) => Option::Some((*node).elem),
         }
     }
 }
 
-use crate::LinkedList::{Nil, Node};
+fn main() {}
 
-fn main() {
-    let mut list = LinkedList::new();
-    list = list.prepend(1);
-    list = list.prepend(2);
-    list = list.prepend(3);
+#[cfg(test)]
+mod test {
+    use super::List;
 
-    println!("Length = {}\n{}", list.len(), list.stringify());
+    #[test]
+    fn test_push_pop() {
+        let mut list = List::new();
+        list.push(1);
+        assert_eq!(list.peek(), Some(1));
+        
+        list.push(2);
+        assert_eq!(list.peek(), Some(2));
+
+        list.push(3);
+        assert_eq!(list.peek(), Some(3));
+
+        assert_eq!(list.pop(), Some(3));
+        assert_eq!(list.pop(), Some(2));
+        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), None);
+
+        assert_eq!(list.peek(), None);
+    }
 }

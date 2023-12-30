@@ -2,9 +2,7 @@ use main::get_unsorted_list;
 use std::time::Instant;
 
 fn swap(list: &mut Vec<i64>, i: usize, r: usize) {
-    let t = list[i];
-    list[i] = list[r];
-    list[r] = t;
+    (list[i], list[r]) = (list[r], list[i]);
 }
 
 fn partition(list: &mut Vec<i64>, p: i64, r: i64) -> i64 {
@@ -42,5 +40,6 @@ fn main() {
     let now = Instant::now();
     quick_sort(&mut list_of_numbers, 0, (size - 1).try_into().unwrap());    
     let elapsed_time = now.elapsed();
+    println!("{:?}", list_of_numbers);
     println!("Running function() took {} ms", elapsed_time.as_millis());
 }
