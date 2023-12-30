@@ -64,14 +64,13 @@ impl List {
 
 impl Drop for List {
     fn drop(&mut self) {
-
-        
         while let Link::More(_) = std::mem::replace(&mut self.head, Link::Empty) {
             match std::mem::replace(&mut self.head, Link::Empty) {
-                Link::Empty => {},
                 Link::More(boxed_node) => {self.head = boxed_node.next}
+                _ => {}
             }   
         }
+        println!("Value dropped len = {}", self.len());
     }
 }
 
