@@ -1,30 +1,26 @@
 #[derive(Debug)]
-pub struct List {
-    head: Link,
+pub struct List<T> {
+    head: Link<T>,
 }
 
 #[derive(Debug)]
-struct Node {
-    elem: u32,
-    next: Link,
+struct Node<T> {
+    elem: T,
+    next: Link<T>,
 }
 
-#[derive(Debug)]
-enum Link {
-    Empty,
-    More(Box<Node>),
-}
+type Link<T> = Option<Box<Node<T>>>;
 
-impl List {
+impl<T> List<T> {
     pub fn new() -> Self {
-        List { head: Link::Empty }
+        List { head: None }
     }
 
     pub fn len(&self) -> u32 {
         let mut size = 0u32;
 
         let mut cur_node = &self.head;
-        while let Link::More(node) = cur_node {
+        while let Some(node) = cur_node {
             cur_node = &node.next;
             size += 1;
         }
@@ -32,49 +28,66 @@ impl List {
         return size;
     }
 
-    pub fn push(&mut self, element: u32) {
+    pub fn push(&mut self, element: T) {
         let new_node = Node {
             elem: element,
             // replace with put Empty into head and return head which is assigned to next
-            next: std::mem::replace(&mut self.head, Link::Empty),
+            next: self.head.take(), //short for std::mem::replace(&mut self.head, Option::None),
         };
         // fix above replacement by assign new value
         // owner of self will still have valid ownership
-        self.head = Link::More(Box::new(new_node));
+        self.head = Some(Box::new(new_node));
     }
 
-    pub fn pop(&mut self) -> Option<u32> {
-        let cur_node = std::mem::replace(&mut self.head, Link::Empty);
-        match cur_node {
-            Link::Empty => Option::None,
-            Link::More(node) => {
-                self.head = node.next;
-                Option::Some((*node).elem)
-            }
-        }
+    pub fn pop(&mut self) -> Option<T> {
+        // let cur_node = self.head.take();
+        // match cur_node {
+        //     Option::None => Option::None,
+        //     Option::Some(node) => {
+        //         self.head = node.next;
+        //         Option::Some(node.elem)
+        //     }
+        // }
+
+        // using concise version
+        self.head.take().map(|node: Box<Node<T>>| {
+            self.head = node.next;
+            node.elem
+        })
     }
 
-    pub fn peek(&self) -> Option<u32> {
-        match &self.head {
-            Link::Empty => Option::None,
-            Link::More(node) => Option::Some((*node).elem),
-        }
+    pub fn peek(&mut self) -> Option<&mut T> {
+        self.head.as_mut().map(|x| &mut x.elem)
     }
 }
 
-impl Drop for List {
+impl<T> Drop for List<T> {
+
     fn drop(&mut self) {
-        while let Link::More(_) = std::mem::replace(&mut self.head, Link::Empty) {
-            match std::mem::replace(&mut self.head, Link::Empty) {
-                Link::More(boxed_node) => {self.head = boxed_node.next}
-                _ => {}
-            }   
+        let now = std::time::Instant::now();
+        println!("Dropping list len = {}", self.len());
+
+        let mut cur_link = self.head.take();
+        while let Some(mut boxed_node) = cur_link {
+            cur_link = boxed_node.next.take();
         }
-        println!("Value dropped len = {}", self.len());
+
+        println!(
+            "Dropped list len = {}, elasped time = {}ms",
+            self.len(),
+            now.elapsed().as_millis()
+        );
     }
 }
 
-fn main() {}
+fn main() {
+    let mut list = List::new();
+
+    let size = 100; //u32::MAX;
+    for i in 0u32..size {
+        list.push(i);
+    }
+}
 
 #[cfg(test)]
 mod test {
@@ -84,13 +97,13 @@ mod test {
     fn test_push_pop() {
         let mut list = List::new();
         list.push(1);
-        assert_eq!(list.peek(), Some(1));
-        
+        assert_eq!(list.peek(), Some(&mut 1));
+
         list.push(2);
-        assert_eq!(list.peek(), Some(2));
+        assert_eq!(list.peek(), Some(&mut 2));
 
         list.push(3);
-        assert_eq!(list.peek(), Some(3));
+        assert_eq!(list.peek(), Some(&mut 3));
 
         assert_eq!(list.len(), 3);
 
@@ -98,23 +111,20 @@ mod test {
         assert_eq!(list.pop(), Some(2));
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
+        assert_eq!(list.pop(), None);
 
         assert_eq!(list.peek(), None);
         assert_eq!(list.len(), 0);
     }
 
     #[test]
-    fn test_push_pop_at_scale() {
+    fn test_push_pop_general() {
         let mut list = List::new();
-        let size = 999u32;
+        let size = 99999u32;
         for i in 0u32..size {
             list.push(i);
         }
 
-        for _ in 0u32..size {
-            list.pop();
-        }
-
-        assert_eq!(list.peek(), None);
+        assert_eq!(list.len(), 99999);
     }
 }

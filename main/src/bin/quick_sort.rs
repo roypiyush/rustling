@@ -37,7 +37,7 @@ fn main() {
     let mut list_of_numbers: Vec<i64> = get_unsorted_list();
     let size = list_of_numbers.len();
 
-    let now = Instant::now();
+    let now: Instant = Instant::now();
     quick_sort(&mut list_of_numbers, 0, (size - 1).try_into().unwrap());    
     let elapsed_time = now.elapsed();
     println!("{:?}", list_of_numbers);
