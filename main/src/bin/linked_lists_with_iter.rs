@@ -40,16 +40,6 @@ impl<T> List<T> {
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        // let cur_node = self.head.take();
-        // match cur_node {
-        //     Option::None => Option::None,
-        //     Option::Some(node) => {
-        //         self.head = node.next;
-        //         Option::Some(node.elem)
-        //     }
-        // }
-
-        // using concise version
         self.head.take().map(|node: Box<Node<T>>| {
             self.head = node.next;
             node.elem
@@ -59,10 +49,11 @@ impl<T> List<T> {
     pub fn peek(&mut self) -> Option<&mut T> {
         self.head.as_mut().map(|x| &mut x.elem)
     }
+
+    
 }
 
 impl<T> Drop for List<T> {
-
     fn drop(&mut self) {
         let now = std::time::Instant::now();
         println!("Dropping list len = {}", self.len());
@@ -80,12 +71,25 @@ impl<T> Drop for List<T> {
     }
 }
 
-impl<T> Iterator for List<T> {
-    fn next(&mut self) -> Option<Self::Item> {
-        self.pop()
-    }
+pub struct Iter<'a, T> {
+    next: Option<&'a Node<T>>,
+}
 
-    type Item = T;
+impl<'a, T> List<T> {
+    pub fn iter(&'a self) -> Iter<'a, T> {
+        Iter { next: self.head.as_deref() }
+    }
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(|node| {
+            self.next = node.next.as_deref();
+            &node.elem
+        })
+    }
 }
 
 fn main() {
@@ -139,14 +143,15 @@ mod test {
     #[test]
     fn into_iter() {
         let mut list = List::new();
-        list.push(1); list.push(2); list.push(3);
+        list.push(1);
+        list.push(2);
+        list.push(3);
 
-        let mut iter = list.into_iter();
-        assert_eq!(iter.next(), Some(3));
-        assert_eq!(iter.next(), Some(2));
-        assert_eq!(iter.next(), Some(1));
+        let mut iter = list.iter();
+        assert_eq!(iter.next(), Some(&3));
+        assert_eq!(iter.next(), Some(&2));
+        assert_eq!(iter.next(), Some(&1));
         assert_eq!(iter.next(), None);
-        assert_eq!(iter.len(), 0);
-
+        assert_eq!(list.len(), 3);
     }
 }
