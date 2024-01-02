@@ -25,7 +25,7 @@ impl<T> List<T> {
             size += 1;
         }
 
-        return size;
+        size
     }
 
     pub fn push(&mut self, element: T) {
