@@ -6,6 +6,7 @@ struct Node<T> {
 
 #[derive(Debug)]
 pub struct List<T> {
+    size: u32,
     head: Link<T>,
 }
 
@@ -18,18 +19,12 @@ where
     pub fn new() -> Self {
         List {
             head: None,
+            size: 0,
         }
     }
 
     pub fn len(&self) -> u32 {
-        let mut size = 0u32;
-
-        let mut cur_node = &self.head;
-        while let Some(node) = cur_node {
-            cur_node = &node.next;
-            size += 1;
-        }
-        size
+        self.size
     }
     
     pub fn push_last(&mut self, value: T) {
@@ -43,12 +38,14 @@ where
             elem: value,
             next: Option::None
         }));
+        self.size += 1;
     }
 
     /// Pops from head
     pub fn pop_front(&mut self) -> Option<T> {
         self.head.take().map(|node: Box<Node<T>>| {
             self.head = node.next;
+            self.size -= 1;
             node.elem
         })
     }
@@ -80,6 +77,7 @@ mod test {
         assert_eq!(list.len(), 0);
         assert_eq!(list.pop_front(), None);
         assert_eq!(list.pop_front(), None);
+        assert_eq!(list.len(), 0);
     }
 }
 
