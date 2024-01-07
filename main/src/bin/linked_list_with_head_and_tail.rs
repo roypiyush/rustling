@@ -136,6 +136,8 @@ mod test {
         list.push_back(1); list.push_back(2); list.push_back(3);
         assert_eq!(list.len(), 3);
 
+        assert_eq!(*list.peek_front().unwrap(), 1);
+        assert_eq!(*list.peek_back().unwrap(), 3);
         list.push_back(1); list.push_back(2); list.push_back(3);
         assert_eq!(list.len(), 6);
 
