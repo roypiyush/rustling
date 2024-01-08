@@ -56,7 +56,7 @@ mod test {
         let my_struct_rc_2 = Rc::clone(&my_struct_rc_1);
 
         my_struct_rc_1.borrow_mut().val = 2;
-        println!("RefCell 2 {}", my_struct_rc_2.borrow());
+        println!("RefCell 2 {}", my_struct_rc_2.borrow_mut().val);
     }
 }
 

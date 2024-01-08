@@ -1,3 +1,4 @@
+
 use std::rc::Rc;
 use std::cell::Ref;
 use std::cell::RefCell;
@@ -39,6 +40,25 @@ where
             len: 0,
         }
     }
+
+    // pub fn len_by_node_count(&self) -> u32 {
+    //     let mut len = 0;
+
+    //     let mut rc = self.head.as_ref();
+    //     loop {
+    //         match rc {
+    //             None => {
+    //                 break;
+    //             },
+    //             Some(rc_node) => {
+    //                 let rc1 = rc_node.as_ref().borrow().next.as_ref();
+    //                 rc = rc1;
+    //             }
+    //         }
+    //     }
+
+    //     len
+    // }
 
     pub fn len(&self) -> u32 {
         self.len
@@ -140,6 +160,8 @@ mod test {
         assert_eq!(*list.peek_back().unwrap(), 3);
         list.push_back(1); list.push_back(2); list.push_back(3);
         assert_eq!(list.len(), 6);
+
+        // assert_eq!(list.len_by_node_count(), 6);
 
         assert_eq!(list.pop_front().unwrap(), 1);
         assert_eq!(list.pop_front().unwrap(), 2);
