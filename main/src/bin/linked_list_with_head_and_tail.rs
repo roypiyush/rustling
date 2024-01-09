@@ -57,10 +57,10 @@ where
 
     pub fn len_by_while(&self) -> u32 {
 
+        println!("{:p} {:p}", &self.head, &self.head.clone(), );
         let mut len = 0u32;
         let mut current = self.head.clone();
 
-        print!("List: ");
         while let Some(node) = current {
             len += 1;
             current = node.borrow().next.clone();
