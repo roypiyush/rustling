@@ -41,24 +41,33 @@ where
         }
     }
 
-    // pub fn len_by_node_count(&self) -> u32 {
-    //     let mut len = 0;
+    pub fn print(&self) {
 
-    //     let mut rc = self.head.as_ref();
-    //     loop {
-    //         match rc {
-    //             None => {
-    //                 break;
-    //             },
-    //             Some(rc_node) => {
-    //                 let rc1 = rc_node.as_ref().borrow().next.as_ref();
-    //                 rc = rc1;
-    //             }
-    //         }
-    //     }
+        let mut current = self.head.clone();
 
-    //     len
-    // }
+        print!("List: ");
+        while let Some(node) = current {
+            let borrowed_node = node.borrow();
+            print!("{:?} ", borrowed_node.elem);
+            current = borrowed_node.next.clone();
+        }
+
+        println!(); // Add a newline at the end
+    }
+
+    pub fn len_by_while(&self) -> u32 {
+
+        let mut len = 0u32;
+        let mut current = self.head.clone();
+
+        print!("List: ");
+        while let Some(node) = current {
+            len += 1;
+            current = node.borrow().next.clone();
+        }
+
+        len
+    }
 
     pub fn len(&self) -> u32 {
         self.len
@@ -156,10 +165,16 @@ mod test {
         list.push_back(1); list.push_back(2); list.push_back(3);
         assert_eq!(list.len(), 3);
 
+        assert_eq!(list.len(), list.len_by_while());
+
+        list.print();
+
         assert_eq!(*list.peek_front().unwrap(), 1);
         assert_eq!(*list.peek_back().unwrap(), 3);
         list.push_back(1); list.push_back(2); list.push_back(3);
         assert_eq!(list.len(), 6);
+
+        list.print();
 
         // assert_eq!(list.len_by_node_count(), 6);
 
@@ -168,12 +183,16 @@ mod test {
         assert_eq!(list.pop_front().unwrap(), 3);
         assert_eq!(list.len(), 3);
 
+        list.print();
+
         assert_eq!(list.pop_front().unwrap(), 1);
         assert_eq!(list.pop_front().unwrap(), 2);
         assert_eq!(list.pop_front().unwrap(), 3);
         assert_eq!(list.len(), 0);
         assert_eq!(list.pop_front(), None);
         assert_eq!(list.pop_front(), None);
+
+        list.print();
         
         list.push_front(1); list.push_front(2); list.push_front(3);
         assert_eq!(list.len(), 3);
