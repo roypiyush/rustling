@@ -159,7 +159,16 @@ mod test {
     #[test]
     fn test_push_pop() {
         let mut list = List::new();
-        list.push_back(1); list.push_back(2); list.push_back(3);
+        
+        list.push_back(1); 
+        assert_eq!(&*list.peek_back().unwrap(), &1);
+
+        list.push_back(2);
+        assert_eq!(&*list.peek_back().unwrap(), &2);
+
+        list.push_back(3);
+        assert_eq!(&*list.peek_back().unwrap(), &3);
+
         assert_eq!(list.len(), 3);
 
         assert_eq!(list.len(), list.len_by_while());
