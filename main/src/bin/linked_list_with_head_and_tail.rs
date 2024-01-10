@@ -43,21 +43,18 @@ where
 
     pub fn print(&self) {
 
-        let mut current = self.head.clone();
-
-        print!("List: ");
-        while let Some(node) = current {
-            let borrowed_node = node.borrow();
-            print!("{:?} ", borrowed_node.elem);
-            current = borrowed_node.next.clone();
+        // getting a new pointer to same allocation
+        let mut current_ptr = self.head.clone();
+        while let Some(cur_node) = current_ptr {
+            let borrowed_node = cur_node.borrow();
+            print!("{:?} -> ", borrowed_node.elem);
+            current_ptr = borrowed_node.next.clone();
         }
-
-        println!(); // Add a newline at the end
+        println!("NIL");
     }
 
     pub fn len_by_while(&self) -> u32 {
 
-        println!("{:p} {:p}", &self.head, &self.head.clone(), );
         let mut len = 0u32;
         let mut current = self.head.clone();
 
