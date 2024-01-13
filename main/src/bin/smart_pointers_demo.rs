@@ -55,8 +55,8 @@ mod test {
         // Clone to have multiple references
         let my_struct_rc_2 = Rc::clone(&my_struct_rc_1);
 
-        my_struct_rc_1.borrow_mut().val = 2; // Mutating value
-        println!("RefCell 2 {}", my_struct_rc_2.borrow());
+        my_struct_rc_1.borrow_mut().val = 2;
+        println!("RefCell 2 {}", my_struct_rc_2.borrow_mut().val);
     }
 
 }
