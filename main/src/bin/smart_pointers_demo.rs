@@ -58,6 +58,7 @@ mod test {
         my_struct_rc_1.borrow_mut().val = 2;
         println!("RefCell 2 {}", my_struct_rc_2.borrow_mut().val);
     }
+
 }
 
 fn main() {}
