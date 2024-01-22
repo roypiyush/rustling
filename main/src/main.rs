@@ -1,7 +1,6 @@
 pub mod parentcomponent; // tells compiler to use 
 
-use parentcomponent::component::MyStructure;
-// use garden::vegetables::Asparagus; Also works
+use crate::parentcomponent::component::MyStructure;
 
 fn main() {
     println!("\n{:?}\n", MyStructure{});

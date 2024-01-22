@@ -44,9 +44,100 @@ impl Solution {
             m + 1
         }
     }
+
+    fn find_insert_pos(nums: &Vec<i32>, insert_pos: usize, elem: i32) -> usize {
+        let mut counter = insert_pos;
+        let size = nums.len();
+
+        while counter < size {
+
+            if nums[counter] > elem {
+                break;
+            }
+            counter += 1;
+        }
+        counter
+    }
+
+    pub fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>) {
+        nums1.resize(m as usize, 0);
+
+        let mut insert_pos: usize = 0;
+        while nums2.len() > 0 {
+            let elem = nums2.remove(0);
+            insert_pos = Self::find_insert_pos(nums1, insert_pos, elem);
+            nums1.insert(insert_pos, elem);
+        }
+    }
+
+    pub fn length_of_last_word(s: String) -> i32 {
+
+        let mut len = 0;
+        
+        for char_at in s.chars().rev() {
+            
+            if len > 0 && char_at == ' ' {
+                return len;
+            } else if char_at == ' ' {
+                
+            } else {
+                len += 1;
+            }
+        }
+        len
+    }
+
+    pub fn bool_compare(match_vec: &Vec<char>, needle: &String) -> bool {
+
+        let mut chars = needle.chars();
+        
+        for c in match_vec {
+            let result = match chars.next() {
+                None => false,
+                Some(v) => c == &v
+            };
+            if !result {
+                return result;
+            }
+        }
+        true
+    }
+
+    pub fn str_str(haystack: String, needle: String) -> i32 {
+
+        let needle_size = needle.len();
+        let haystack_size = haystack.len();
+        let mut i = 0;
+        let mut j = 0;
+
+        let mut match_vec: Vec<char> = Vec::new();
+        let h_chars: Vec<char> = haystack.chars().collect();
+
+        while j < haystack_size {
+
+            match_vec.push(h_chars[j]);
+            if j >= needle_size {
+                match_vec.remove(0);
+                i += 1;
+            }
+
+            if match_vec.len() == needle_size && Self::bool_compare(&match_vec, &needle) {
+                return i;
+            }
+            
+            j += 1;
+        }
+
+        -1
+    }
+
 }
 
 fn main() {
+
+    let s = String::from("Hello World");
+    let mut charst = s.chars();
+    charst.nth(0);
     let mut nums = vec![1,2];
 
     assert_eq!(nums.remove(0), 1);
@@ -54,4 +145,15 @@ fn main() {
 
     let target = 2;
     println!("{}", Solution::search_insert(nums, target));
+
+
+    let ref mut nums1 = vec![1,2,3,0,0,0];
+    let ref mut nums2 = vec![2,5,6];
+    
+    Solution::merge(nums1, 3, nums2);
+    println!("{:?}", nums1);
+
+    println!("{:?}", Solution::length_of_last_word(String::from("hello world")));
+    println!("{:?}", Solution::str_str(String::from("leetcode"), String::from("leeto")));
+
 }
