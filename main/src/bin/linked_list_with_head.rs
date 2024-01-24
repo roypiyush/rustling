@@ -84,11 +84,13 @@ mod test {
     #[test]
     fn test_scale() {
         let mut list = List::new();
-        for i in 1..= 10u32 {
+        
+        let size = 100u32;
+        for i in 1..= size {
             list.push_back(i); // this is linear insertion
         }
 
-        for i in 1..= 10u32 {
+        for i in 1..= size {
             assert_eq!(list.pop_front().unwrap(), i);
         }
     }
