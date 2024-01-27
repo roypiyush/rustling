@@ -3,31 +3,36 @@ use std::{
     net::{TcpListener, TcpStream},
 };
 
+use std::thread;
 
-
-pub fn get_lower_case(c: char) -> char {
-    let i = c as u8;
-    if i < 97 {
-        (c as u8 + 32) as char
-    } else {
-        c
+pub fn println_vec(v: Vec<String>) {
+    for v1 in v {
+        println!("{v1}");
     }
 }
 
-
 fn main() {
+    let n_workers = 4;
 
-    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    let pool = threadpool::Builder::new()
+        .num_threads(n_workers)
+        .thread_stack_size(8_000_000)
+        .build();
 
-    let mut connection_count = 0;
+    let bind_addr = "127.0.0.1:8000";
+    let listener = TcpListener::bind(bind_addr).unwrap();
+
+    println!("Bound to http://{bind_addr}");
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
-        handle_connection(stream, &mut connection_count);
+        pool.execute(move || {
+            handle_connection(stream);
+        });
     }
 }
 
-fn handle_connection(mut stream: TcpStream, connection_count: &mut i32) {
+fn handle_connection(mut stream: TcpStream) {
     let buf_reader = BufReader::new(&mut stream);
     let http_request: Vec<String> = buf_reader
         .lines()
@@ -35,11 +40,11 @@ fn handle_connection(mut stream: TcpStream, connection_count: &mut i32) {
         .take_while(|line| !line.is_empty())
         .collect();
 
-    println!("Received {:?}", http_request);
-
-    let response = "HTTP/1.1 200 OK\r\n\r\n";
-    *connection_count += 1;
-    println!("Established Connection {connection_count}");
+    
+    let mut response = "HTTP/1.1 200 OK\r\n\r\n".to_string();
+    response.push_str(http_request[0].as_str());
+    response.push_str("\n");
+    response.push_str(std::fmt::format(format_args!("{:?}", thread::current().id())).as_str());
 
     stream.write_all(response.as_bytes()).unwrap();
 }
