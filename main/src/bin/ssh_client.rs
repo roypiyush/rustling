@@ -15,20 +15,22 @@ fn main() {
     let host_with_port = cmd_args.next();
     let username = cmd_args.next();
     let password = cmd_args.next();
-    let prompt = cmd_args.next().unwrap(); // prompt could be auto detected
+    let prompt = cmd_args.next(); // prompt could be auto detected
 
     let reader = thread::Builder::new().name("reader".to_string());
     let writer = thread::Builder::new().name("writer".to_string());
 
-    match (&host_with_port, &username, &password) {
-        (Some(_), Some(_), Some(_)) => {
+    match (&host_with_port, &username, &password, &prompt) {
+        (Some(_), Some(_), Some(_), Some(_)) => {
             // correct input. program will proceed
         }
-        (_, _, _) => {
-            println!("Usage: ./ssh_client <host:port> <username> <password> <command>");
+        (_, _, _, _) => {
+            println!("Usage: ./ssh_client <host:port> <username> <password> <command> <prompt>");
             return;
         }
     }
+
+    let prompt = prompt.unwrap();
 
     let mut session: ssh::SessionBroker = ssh::create_session()
         .username(&username.unwrap())
@@ -49,9 +51,10 @@ fn main() {
     let is_exit_writer = Arc::clone(&is_exit);
 
     let (tx, rx) = mpsc::channel();
-
+    
     let join_handle_reader = reader
         .spawn(move || loop {
+            
             if *is_prompt.try_lock().unwrap() {
                 rx.recv().unwrap();
                 if *is_exit_reader.try_lock().unwrap() {
@@ -63,6 +66,7 @@ fn main() {
             } else {
                 let data = read_channel.try_lock().unwrap().read().unwrap();
                 let string_data = String::from_utf8(data).unwrap();
+                
                 print!("{}", string_data);
                 io::stdout().flush().unwrap();
 
@@ -90,7 +94,7 @@ fn main() {
                     *is_exit_writer.try_lock().unwrap() = true;
                 }
                 write.write(cmd.as_bytes()).unwrap();    
-                tx.send("f").unwrap();
+                tx.send(cmd).unwrap();
 
             } else {
                 // Error Scenarios [add more as required]
