@@ -8,6 +8,9 @@ use std::sync::mpsc;
 
 use ssh::{self, TerminalSize};
 
+///
+/// This is just a demo. Not to be used in production.
+/// 
 fn main() {
     let mut cmd_args = std::env::args();
     cmd_args.next(); // skip this file
