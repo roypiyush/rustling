@@ -1,5 +1,7 @@
 use std::{cell::RefCell, rc::Rc};
 
+struct Solution;
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
     pub val: i32,
@@ -18,7 +20,18 @@ impl TreeNode {
     }
 }
 
-struct Solution;
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode { next: None, val }
+    }
+}
 
 impl Solution {
     pub fn get_value(nums: &Vec<i32>, index: &i32, size: &i32) -> i32 {
@@ -144,9 +157,7 @@ impl Solution {
         match root {
             None => None,
             Some(node_ref) => {
-
                 let mut borrow_mut = node_ref.borrow_mut();
-
 
                 let left = borrow_mut.left.take();
                 let right = borrow_mut.right.take();
@@ -154,11 +165,107 @@ impl Solution {
                 borrow_mut.left = Self::invert_tree(right);
                 borrow_mut.right = Self::invert_tree(left);
 
-                
                 return Some(node_ref.clone());
             }
         }
     }
+
+    /// This is returning a new reversed element. "head" list is dropped when function ends.
+    fn reverse_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        // convert to mutable as full ownership is present
+        let mut head = head;
+
+        // pointer, wrapper element to be mutable
+        let mut ref_head = head.as_mut();
+
+        // result list
+        let mut result = None;
+
+        // remove first element
+        while let Some(node_ref) = ref_head.take() {
+            // get mutable reference to next element
+            let next_node = node_ref.next.as_mut();
+
+            // create node with next = result (prev) and assign prev to as current (result)
+            result = Some(Box::new(ListNode {
+                val: node_ref.val,
+                next: result,
+            }));
+
+            // set reference to next node, which will be first element in remaining list
+            ref_head = next_node;
+        }
+
+        // at this moment "result" and "head" exists. 
+        // can we reduce this memory overhead
+
+        result
+    }
+
+    pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
+        let mut size = 0;
+        let mut ptr = &head;
+        while let Some(n) = ptr {
+            size += 1;
+            ptr = &n.next;
+        }
+
+        if size == 1 || size == 0 {
+            return true;
+        }
+
+        let (list1, list2) = Self::break_into_half(size, head);
+
+        let mut list1 = list1.as_ref();
+        let mut list2 = list2.as_ref();
+
+        while let (Some(l1), Some(l2)) = (list1, list2) {
+            if l1.val != l2.val {
+                return false;
+            }
+
+            list1 = l1.next.as_ref();
+            list2 = l2.next.as_ref();
+        }
+
+        true
+    }
+
+    fn break_into_half(size: i32, head: Option<Box<ListNode>>) -> (Option<Box<ListNode>>, Option<Box<ListNode>>) {
+
+        let half = size / 2;
+
+        let mut list2 = head;
+        let mut list1 = None;
+
+        let mut count = 0;
+        while let Some(node_ref) = list2.take() {
+            
+            let next_node = node_ref.next;
+            list1 = Some(Box::new(ListNode {
+                val: node_ref.val,
+                next: list1,
+            }));
+
+            list2 = next_node;
+
+            count += 1;
+
+            if count >= half {
+                if size % 2 == 1 {
+                    if let Some(node_ref) = list2.take() {
+                        list2 = node_ref.next;
+                    }
+                }
+                break;
+            }
+        }
+
+        // list1 is also reversed 
+        (list1, list2)
+    }
+
+
 }
 
 fn main() {
@@ -188,5 +295,7 @@ fn main() {
         Solution::str_str(String::from("leetcode"), String::from("leeto"))
     );
 
+    Solution::reverse_list(None);
     Solution::invert_tree(None);
+    Solution::is_palindrome(None);
 }
