@@ -265,6 +265,37 @@ impl Solution {
         (list1, list2)
     }
 
+    pub fn binary_tree_paths(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<String> {
+        let mut path: Vec<i32> = Vec::new();
+        let mut result: Vec<String> = Vec::new();
+        Self::internal_binary_tree_paths(&root, &mut path, &mut result);
+        result
+    }
+
+    fn internal_binary_tree_paths(root: &Option<Rc<RefCell<TreeNode>>>, path: &mut Vec<i32>, result: &mut Vec<String>) {
+        
+        if let Some(node_ref) = root {
+
+            let val = node_ref.borrow().val;
+            let left = &node_ref.borrow().left;
+            let right = &node_ref.borrow().right;
+
+            path.push(val);
+
+            if left.is_none() && right.is_none() {
+                result.push(path.iter().map(|x| x.to_string()).collect::<Vec<String>>().join("->"));
+            } else {
+                if left.is_some() {
+                    Self::internal_binary_tree_paths(&left, path, result);
+                }
+                if right.is_some() {
+                    Self::internal_binary_tree_paths(&right, path, result);
+                }
+            }
+
+            path.remove(path.len() - 1);
+        }
+    }
 
 }
 
@@ -274,6 +305,7 @@ fn main() {
     charst.nth(0);
     let mut nums = vec![1, 2];
 
+    ListNode::new(0);
     assert_eq!(nums.remove(0), 1);
     assert_eq!(nums.remove(0), 2);
 
@@ -298,4 +330,5 @@ fn main() {
     Solution::reverse_list(None);
     Solution::invert_tree(None);
     Solution::is_palindrome(None);
+    Solution::binary_tree_paths(None);
 }
