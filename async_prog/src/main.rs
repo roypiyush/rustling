@@ -1,4 +1,3 @@
-
 async fn my_async() {
     println!("Hello, world!");
 }

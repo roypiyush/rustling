@@ -49,8 +49,6 @@ impl<T> List<T> {
     pub fn peek(&mut self) -> Option<&mut T> {
         self.head.as_mut().map(|x| &mut x.elem)
     }
-
-    
 }
 
 impl<T> Drop for List<T> {

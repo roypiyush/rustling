@@ -45,10 +45,9 @@ impl<T> List<T> {
 
     pub fn tail(&self) -> List<T> {
         List {
-            head: self.head.as_ref().and_then(|node| node.next.clone())
+            head: self.head.as_ref().and_then(|node| node.next.clone()),
         }
     }
-
 }
 
 impl<T> Drop for List<T> {
@@ -70,7 +69,9 @@ pub struct Iter<'a, T> {
 
 impl<T> List<T> {
     pub fn iter(&self) -> Iter<'_, T> {
-        Iter { next: self.head.as_deref() }
+        Iter {
+            next: self.head.as_deref(),
+        }
     }
 }
 
@@ -85,8 +86,7 @@ impl<'a, T> Iterator for Iter<'a, T> {
     }
 }
 
-fn main() {
-}
+fn main() {}
 
 #[cfg(test)]
 mod test {
@@ -112,7 +112,5 @@ mod test {
         // Make sure empty tail works
         let list = list.tail();
         assert_eq!(list.head(), None);
-
     }
-
 }

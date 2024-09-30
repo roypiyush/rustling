@@ -1,4 +1,3 @@
-
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode {
     pub val: i32,
@@ -12,7 +11,6 @@ impl Solution {
         list1: Option<Box<ListNode>>,
         list2: Option<Box<ListNode>>,
     ) -> Option<Box<ListNode>> {
-
         let mut list1_opt = list1;
         let mut list2_opt = list2;
 
@@ -27,25 +25,18 @@ impl Solution {
                 (Some(_), None) => {
                     let l = list1_opt.take();
                     *ptr = Some(l.unwrap());
-                    
                 }
                 (None, Some(_)) => {
-                    
                     let l = list2_opt.take();
                     *ptr = Some(l.unwrap());
-                    
                 }
                 (Some(l1), Some(l2)) => {
                     if l1.val < l2.val {
-                        
                         let l = list1_opt.take();
                         let mut list_node = l.unwrap();
                         list1_opt = list_node.next.take();
                         *ptr = Some(list_node);
-                        
-
                     } else {
-
                         let l = list2_opt.take();
                         let mut list_node = l.unwrap();
                         list2_opt = list_node.next.take();

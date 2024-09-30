@@ -196,7 +196,7 @@ impl Solution {
             ref_head = next_node;
         }
 
-        // at this moment "result" and "head" exists. 
+        // at this moment "result" and "head" exists.
         // can we reduce this memory overhead
 
         result
@@ -231,8 +231,10 @@ impl Solution {
         true
     }
 
-    fn break_into_half(size: i32, head: Option<Box<ListNode>>) -> (Option<Box<ListNode>>, Option<Box<ListNode>>) {
-
+    fn break_into_half(
+        size: i32,
+        head: Option<Box<ListNode>>,
+    ) -> (Option<Box<ListNode>>, Option<Box<ListNode>>) {
         let half = size / 2;
 
         let mut list2 = head;
@@ -240,7 +242,6 @@ impl Solution {
 
         let mut count = 0;
         while let Some(node_ref) = list2.take() {
-            
             let next_node = node_ref.next;
             list1 = Some(Box::new(ListNode {
                 val: node_ref.val,
@@ -261,7 +262,7 @@ impl Solution {
             }
         }
 
-        // list1 is also reversed 
+        // list1 is also reversed
         (list1, list2)
     }
 
@@ -272,10 +273,12 @@ impl Solution {
         result
     }
 
-    fn internal_binary_tree_paths(root: &Option<Rc<RefCell<TreeNode>>>, path: &mut Vec<i32>, result: &mut Vec<String>) {
-        
+    fn internal_binary_tree_paths(
+        root: &Option<Rc<RefCell<TreeNode>>>,
+        path: &mut Vec<i32>,
+        result: &mut Vec<String>,
+    ) {
         if let Some(node_ref) = root {
-
             let val = node_ref.borrow().val;
             let left = &node_ref.borrow().left;
             let right = &node_ref.borrow().right;
@@ -283,7 +286,12 @@ impl Solution {
             path.push(val);
 
             if left.is_none() && right.is_none() {
-                result.push(path.iter().map(|x| x.to_string()).collect::<Vec<String>>().join("->"));
+                result.push(
+                    path.iter()
+                        .map(|x| x.to_string())
+                        .collect::<Vec<String>>()
+                        .join("->"),
+                );
             } else {
                 if left.is_some() {
                     Self::internal_binary_tree_paths(&left, path, result);
@@ -296,7 +304,6 @@ impl Solution {
             path.remove(path.len() - 1);
         }
     }
-
 }
 
 fn main() {

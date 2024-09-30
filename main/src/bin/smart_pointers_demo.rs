@@ -14,8 +14,8 @@ impl Display for MyStruct {
 mod test {
 
     use super::MyStruct;
-    use std::rc::Rc;
     use std::cell::RefCell;
+    use std::rc::Rc;
 
     #[test]
     fn box_pointer_demo() {
@@ -41,7 +41,6 @@ mod test {
 
         let my_struct_rc_2: Rc<MyStruct> = Rc::clone(&my_struct_rc_1);
         println!("{}", my_struct_rc_2);
-
     }
 
     #[test]
@@ -58,7 +57,6 @@ mod test {
         my_struct_rc_1.borrow_mut().val = 2;
         println!("RefCell 2 {}", my_struct_rc_2.borrow_mut().val);
     }
-
 }
 
 fn main() {}

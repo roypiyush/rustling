@@ -17,7 +17,6 @@ pub fn get_unsorted_list() -> Vec<i64> {
         println!("Integer was not provided or is not i64");
         process::exit(1);
     });
-    
 
     let mut list_of_numbers: Vec<i64> = Vec::new();
     for _i in 0..size {

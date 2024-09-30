@@ -49,8 +49,6 @@ impl<T> List<T> {
     pub fn peek(&mut self) -> Option<&mut T> {
         self.head.as_mut().map(|x| &mut x.elem)
     }
-
-    
 }
 
 impl<T> Drop for List<T> {
@@ -77,7 +75,9 @@ pub struct IterMut<'a, T> {
 
 impl<T> List<T> {
     pub fn iter_mut(&mut self) -> IterMut<'_, T> {
-        IterMut { next: self.head.as_deref_mut() }
+        IterMut {
+            next: self.head.as_deref_mut(),
+        }
     }
 }
 

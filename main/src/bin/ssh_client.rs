@@ -10,7 +10,7 @@ use ssh::{self, TerminalSize};
 
 ///
 /// This is just a demo. Not to be used in production.
-/// 
+///
 fn main() {
     let mut cmd_args = std::env::args();
     cmd_args.next(); // skip this file
@@ -54,10 +54,9 @@ fn main() {
     let is_exit_writer = Arc::clone(&is_exit);
 
     let (tx, rx) = mpsc::channel();
-    
+
     let join_handle_reader = reader
         .spawn(move || loop {
-            
             if *is_prompt.try_lock().unwrap() {
                 rx.recv().unwrap();
                 if *is_exit_reader.try_lock().unwrap() {
@@ -65,11 +64,10 @@ fn main() {
                 }
 
                 *is_prompt.try_lock().unwrap() = false;
-
             } else {
                 let data = read_channel.try_lock().unwrap().read().unwrap();
                 let string_data = String::from_utf8(data).unwrap();
-                
+
                 print!("{}", string_data);
                 io::stdout().flush().unwrap();
 
@@ -90,15 +88,13 @@ fn main() {
             let mut cmd = String::new();
             let stdin = io::stdin();
             stdin.read_line(&mut cmd).unwrap();
-            
-            if let Ok(mut write) = write_channel.try_lock() {
 
+            if let Ok(mut write) = write_channel.try_lock() {
                 if cmd.contains("exit") {
                     *is_exit_writer.try_lock().unwrap() = true;
                 }
-                write.write(cmd.as_bytes()).unwrap();    
+                write.write(cmd.as_bytes()).unwrap();
                 tx.send(cmd).unwrap();
-
             } else {
                 // Error Scenarios [add more as required]
                 // 1. Multiple line command where prompt disappears

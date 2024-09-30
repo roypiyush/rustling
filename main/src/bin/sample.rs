@@ -21,7 +21,7 @@ fn main() {
     const WIDTH: usize = 4;
     const HEIGHT: usize = 4;
 
-    let mut array = [[0 as u8; WIDTH] ; HEIGHT];
+    let mut array = [[0 as u8; WIDTH]; HEIGHT];
     array[2][2] = 5;
 
     println!("{:?}", array);

@@ -1,7 +1,6 @@
-
-use std::rc::Rc;
 use std::cell::Ref;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 type Link<T> = Option<Rc<RefCell<Node<T>>>>;
 
@@ -24,7 +23,7 @@ impl<T> Node<T> {
         Rc::new(RefCell::new(Node {
             elem: elem,
             prev: None,
-            next: None
+            next: None,
         }))
     }
 }
@@ -42,7 +41,6 @@ where
     }
 
     pub fn print(&self) {
-
         // getting a new pointer to same allocation
         let mut current_ptr = self.head.clone();
         while let Some(cur_node) = current_ptr {
@@ -54,7 +52,6 @@ where
     }
 
     pub fn len_by_while(&self) -> u32 {
-
         let mut len = 0u32;
         let mut current = self.head.clone();
 
@@ -71,24 +68,24 @@ where
     }
 
     pub fn peek_front(&self) -> Option<Ref<T>> {
-        self.head.as_ref().map(|node| {
-            Ref::map(node.borrow(), |n| &n.elem)
-        })
+        self.head
+            .as_ref()
+            .map(|node| Ref::map(node.borrow(), |n| &n.elem))
     }
 
     pub fn peek_back(&self) -> Option<Ref<T>> {
-        self.tail.as_ref().map(|node| {
-            Ref::map(node.borrow(), |n| &n.elem)
-        })
+        self.tail
+            .as_ref()
+            .map(|node| Ref::map(node.borrow(), |n| &n.elem))
     }
-    
+
     pub fn push_back(&mut self, value: T) {
         let new_node = Node::new(value);
         match self.tail.take() {
             None => {
                 self.head = Some(new_node.clone());
                 self.tail = Some(new_node);
-            },
+            }
             Some(old_node) => {
                 old_node.borrow_mut().next = Some(new_node.clone());
                 new_node.borrow_mut().prev = Some(old_node);
@@ -104,7 +101,7 @@ where
             None => {
                 self.head = Some(new_node.clone());
                 self.tail = Some(new_node);
-            },
+            }
             Some(old_node) => {
                 old_node.borrow_mut().prev = Some(new_node.clone());
                 new_node.borrow_mut().next = Some(old_node);
@@ -121,13 +118,13 @@ where
                 None => {
                     self.tail.take();
                     self.len -= 1;
-                },
+                }
                 Some(next_node) => {
                     next_node.borrow_mut().prev.take();
                     self.head = Some(next_node);
                     self.len -= 1;
                 }
-            }   
+            }
             Rc::try_unwrap(old_head).unwrap().into_inner().elem
         })
     }
@@ -138,7 +135,7 @@ where
                 None => {
                     self.head.take();
                     self.len -= 1;
-                },
+                }
                 Some(next_node) => {
                     next_node.borrow_mut().next.take();
                     self.tail = Some(next_node);
@@ -148,19 +145,17 @@ where
             Rc::try_unwrap(old_tail).unwrap().into_inner().elem
         })
     }
-
 }
 
 #[cfg(test)]
 mod test {
     use crate::List;
 
-
     #[test]
     fn test_push_pop() {
         let mut list = List::new();
-        
-        list.push_back(1); 
+
+        list.push_back(1);
         assert_eq!(&*list.peek_back().unwrap(), &1);
 
         list.push_back(2);
@@ -177,7 +172,9 @@ mod test {
 
         assert_eq!(*list.peek_front().unwrap(), 1);
         assert_eq!(*list.peek_back().unwrap(), 3);
-        list.push_back(1); list.push_back(2); list.push_back(3);
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
         assert_eq!(list.len(), 6);
 
         list.print();
@@ -199,8 +196,10 @@ mod test {
         assert_eq!(list.pop_front(), None);
 
         list.print();
-        
-        list.push_front(1); list.push_front(2); list.push_front(3);
+
+        list.push_front(1);
+        list.push_front(2);
+        list.push_front(3);
         assert_eq!(list.len(), 3);
 
         assert_eq!(list.pop_back().unwrap(), 1);
@@ -213,7 +212,6 @@ mod test {
         assert_eq!(list.len(), 0);
         list.pop_back();
         assert_eq!(list.len(), 0);
-
     }
 }
 

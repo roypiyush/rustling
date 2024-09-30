@@ -6,7 +6,7 @@ fn main() {
     let size = list_of_numbers.len();
 
     let now = Instant::now();
-    merge_sort(&mut list_of_numbers, 0, size - 1);    
+    merge_sort(&mut list_of_numbers, 0, size - 1);
     let elapsed_time = now.elapsed();
     println!("Running function() took {} ms", elapsed_time.as_millis());
 }

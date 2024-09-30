@@ -1,7 +1,7 @@
-pub mod parentcomponent; // tells compiler to use 
+pub mod parentcomponent; // tells compiler to use
 
 use crate::parentcomponent::component::MyStructure;
 
 fn main() {
-    println!("\n{:?}\n", MyStructure{});
+    println!("\n{:?}\n", MyStructure {});
 }

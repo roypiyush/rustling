@@ -1,7 +1,6 @@
-#![allow(dead_code)] // FIXME   
+#![allow(dead_code)] // FIXME
 
 use std::ptr;
-
 
 pub struct List<T> {
     head: Link<T>,
@@ -38,13 +37,13 @@ impl<T> List<T> {
         unsafe {
             // Immediately convert the Box into a raw pointer
             let new_tail = Box::into_raw(Box::new(Self::new_node(elem)));
-    
+
             if !self.tail.is_null() {
                 (*self.tail).next = new_tail;
             } else {
                 self.head = new_tail;
             }
-    
+
             self.tail = new_tail;
         }
     }
@@ -57,22 +56,20 @@ impl<T> List<T> {
                 // RISE FROM THE GRAVE
                 let head = Box::from_raw(self.head);
                 self.head = head.next;
-    
+
                 if self.head.is_null() {
                     self.tail = ptr::null_mut();
                 }
-    
+
                 Some(head.elem)
             }
         }
     }
-    
-    
 }
 
 impl<T> Drop for List<T> {
     fn drop(&mut self) {
-        while let Some(_) = self.pop() { }
+        while let Some(_) = self.pop() {}
     }
 }
 

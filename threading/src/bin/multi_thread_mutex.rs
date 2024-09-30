@@ -8,7 +8,7 @@ fn main() {
     for _ in 0..10 {
         let counter = Arc::clone(&counter);
 
-        let handle = thread::spawn(move || {    
+        let handle = thread::spawn(move || {
             let mut num = counter.lock().unwrap();
 
             *num += 1;

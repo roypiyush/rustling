@@ -6,7 +6,6 @@ fn swap(list: &mut Vec<i64>, i: usize, r: usize) {
 }
 
 fn partition(list: &mut Vec<i64>, p: i64, r: i64) -> i64 {
-
     let x = list[r as usize];
 
     let mut i: i64 = p - 1;
@@ -24,9 +23,7 @@ fn partition(list: &mut Vec<i64>, p: i64, r: i64) -> i64 {
 }
 
 fn quick_sort(list: &mut Vec<i64>, left: i64, right: i64) {
-
     if left < right {
-
         let partition = partition(list, left, right);
         quick_sort(list, left, partition - 1);
         quick_sort(list, partition + 1, right);
@@ -38,7 +35,7 @@ fn main() {
     let size = list_of_numbers.len();
 
     let now: Instant = Instant::now();
-    quick_sort(&mut list_of_numbers, 0, (size - 1).try_into().unwrap());    
+    quick_sort(&mut list_of_numbers, 0, (size - 1).try_into().unwrap());
     let elapsed_time = now.elapsed();
     println!("Running function() took {} ms", elapsed_time.as_millis());
 }
