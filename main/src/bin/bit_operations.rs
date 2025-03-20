@@ -2,7 +2,7 @@ fn main() {
 
 }
 
-#[cfg!(test)]
+#[cfg(test)]
 mod test {
 
 
