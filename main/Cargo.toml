@@ -13,3 +13,7 @@ tui = "0.19.0"
 memmap2 = "0.9"
 rayon = "1.10"
 iced = "0.5"
+eframe = "0.26"
+
+log = "0.4"
+env_logger = "0.10"
