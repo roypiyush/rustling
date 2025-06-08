@@ -1,4 +1,4 @@
 [workspace]
 resolver = "2"
 
-members = [ "async_prog", "main", "tcp_server", "threading"]
+members = [ "async_prog", "main", "tcp_server", "threading", "protobuf"]
