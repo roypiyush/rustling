@@ -1,41 +1,49 @@
-use main::get_unsorted_list;
 use std::time::Instant;
 
-fn swap(list: &mut Vec<i64>, i: usize, r: usize) {
-    (list[i], list[r]) = (list[r], list[i]);
+fn quick_sort(list: &mut Vec<i64>, mut p: usize, mut q: usize) {
+    while p < q {
+        let partition = partition(list, p, q);
+
+        if partition - p < q - partition {
+            if partition > 0 {
+                quick_sort(list, p, partition - 1);
+            }
+            p = partition + 1;
+        } else {
+            quick_sort(list, partition + 1, q);
+            q = partition - 1;
+        }
+    }
 }
 
-fn partition(list: &mut Vec<i64>, p: i64, r: i64) -> i64 {
-    let x = list[r as usize];
+fn partition(list: &mut Vec<i64>, p: usize, q: usize) -> usize {
+    let pivot = list[q];
+    let mut i = p;
 
-    let mut i: i64 = p - 1;
-    for j in p..r {
-        if list[j as usize] <= x {
+    for j in p..q {
+        if list[j] < pivot {
+            list.swap(i, j);
             i += 1;
-            swap(list, i as usize, j as usize);
         }
     }
 
-    i += 1;
-    swap(list, i as usize, r as usize);
-
-    return i;
-}
-
-fn quick_sort(list: &mut Vec<i64>, left: i64, right: i64) {
-    if left < right {
-        let partition = partition(list, left, right);
-        quick_sort(list, left, partition - 1);
-        quick_sort(list, partition + 1, right);
-    }
+    list.swap(i, q);
+    i
 }
 
 fn main() {
-    let mut list_of_numbers: Vec<i64> = get_unsorted_list();
-    let size = list_of_numbers.len();
+    let mut list = main::get_unsorted_list();
 
-    let now: Instant = Instant::now();
-    quick_sort(&mut list_of_numbers, 0, (size - 1).try_into().unwrap());
-    let elapsed_time = now.elapsed();
-    println!("Running function() took {} ms", elapsed_time.as_millis());
+    let instant = Instant::now();
+
+    let p: usize = 0;
+    let q: usize = list.len();
+
+    quick_sort(&mut list, p, q - 1);
+
+    println!("Time taken {}", instant.elapsed().as_millis());
+    for n in list {
+        print!("{n} ");
+    }
+    println!();
 }
